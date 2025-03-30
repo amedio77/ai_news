@@ -1,9 +1,1 @@
-[
-  {
-    "title": "[테스트] AI 기술 발전 소식",
-    "summary": "이것은 테스트 뉴스 내용입니다.",
-    "link": "https://test.news/article/1",
-    "published": "2025-03-30 04:38:05",
-    "source": "테스트 뉴스"
-  }
-]
+[{   "user_name": "TechCrunch",   "user_screen_name": "techcrunch",   "tweet_text": "Javice found guilty of defrauding JPMorgan in $175M startup purchase\n\nCharlie Javice, the founder of student loan application startup Frank that was purchased by JPMorgan for $175 million, was found guilty on Friday of defrauding the bank by greatly inflating the customer count. After a five-week trial, the jury found Javice guilty, agreeing with prosecutors&#8217; claims that she fabricated the vast majority of Frank&#8217;s customer [&#8230;]\n\nhttps://techcrunch.com/2025/03/28/javice-found-guilty-of-defrauding-jpmorgan-in-175m-startup-purchase/",   "created_at": "2025-03-29T08:41:13+09:00",   "source_type": "rss" }]

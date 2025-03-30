@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-워드프레스 블로그 게시 모듈
+워드프레스 블로그 게시 모듈 (REST API 사용)
 """
 
 import os
@@ -12,13 +12,12 @@ import datetime
 import re
 from PIL import Image
 import requests
+import frontmatter
+import markdown2
 from io import BytesIO
 from dotenv import load_dotenv
-from wordpress_xmlrpc import Client, WordPressPost
-from wordpress_xmlrpc.methods.posts import NewPost, GetPosts
-from wordpress_xmlrpc.methods.users import GetUserInfo
-from wordpress_xmlrpc.methods.media import UploadFile
-from wordpress_xmlrpc.compat import xmlrpc_client
+from base64 import b64encode
+from urllib.parse import urljoin
 
 # 환경 변수 로드
 load_dotenv()
@@ -31,115 +30,183 @@ class WordPressPublisher:
         # 워드프레스 설정
         self.wp_url = os.getenv('WP_URL')
         self.wp_username = os.getenv('WP_USERNAME')
-        self.wp_password = os.getenv('WP_PASSWORD')
+        self.wp_password = os.getenv('WP_APP_PASSWORD')
+        
+        # REST API 엔드포인트
+        self.api_url = urljoin(self.wp_url, 'wp-json/wp/v2')
+        self.auth_token = None
         
         # 입출력 디렉토리 설정
-        self.output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output')
+        self.output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'output')
         self.images_dir = os.path.join(self.output_dir, 'images')
         self.metadata_dir = os.path.join(self.output_dir, 'metadata')
+        self.blogs_dir = os.path.join(self.output_dir, 'blogs')
         
         # 디렉토리 생성
-        for directory in [self.output_dir, self.images_dir, self.metadata_dir]:
+        for directory in [self.output_dir, self.images_dir, self.metadata_dir, self.blogs_dir]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
-        
-        # 워드프레스 클라이언트
-        self.client = None
-    
-    def connect_to_wordpress(self):
-        """워드프레스에 연결
+
+    def find_latest_blog(self):
+        """가장 최근에 생성된 블로그 파일을 찾습니다.
         
         Returns:
-            Client: 워드프레스 클라이언트 객체
+            str: 블로그 파일 경로 또는 None
         """
         try:
-            if not all([self.wp_url, self.wp_username, self.wp_password]):
-                print("워드프레스 연결 정보가 설정되지 않았습니다. .env 파일을 확인하세요.")
+            if not os.path.exists(self.blogs_dir):
+                print("블로그 디렉토리를 찾을 수 없습니다.")
                 return None
             
-            self.client = Client(self.wp_url, self.wp_username, self.wp_password)
-            return self.client
+            # .md 파일만 필터링
+            blog_files = [f for f in os.listdir(self.blogs_dir) if f.endswith('.md')]
+            if not blog_files:
+                print("발행할 블로그 포스트를 찾을 수 없습니다.")
+                return None
+            
+            # 최신 파일 찾기
+            latest_file = max(blog_files, key=lambda x: os.path.getctime(os.path.join(self.blogs_dir, x)))
+            return os.path.join(self.blogs_dir, latest_file)
+            
         except Exception as e:
-            print(f"워드프레스 연결 중 오류 발생: {e}")
+            print(f"블로그 파일 검색 중 오류 발생: {str(e)}")
             return None
 
-    def optimize_image(self, image_path, max_size=(1200, 1200), quality=85):
-        """이미지 최적화
+    def process_blog_content(self, file_path):
+        """블로그 파일의 내용을 처리합니다.
         
         Args:
-            image_path (str): 최적화할 이미지 파일 경로
-            max_size (tuple): 최대 이미지 크기 (width, height)
-            quality (int): 이미지 품질 (1-100)
+            file_path (str): 블로그 파일 경로
+            
+        Returns:
+            tuple: (제목, 내용, 메타데이터)
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                post = frontmatter.load(f)
+            
+            # 메타데이터 추출
+            metadata = post.metadata
+            title = metadata.get('title', '')
+            
+            # Markdown을 HTML로 변환
+            content = markdown2.markdown(post.content, extras=['fenced-code-blocks', 'tables'])
+            
+            return title, content, metadata
+            
+        except Exception as e:
+            print(f"블로그 내용 처리 중 오류 발생: {str(e)}")
+            return None, None, None
+
+    def find_blog_images(self, content):
+        """블로그 내용에서 이미지 파일을 찾습니다.
+        
+        Args:
+            content (str): 블로그 내용
+            
+        Returns:
+            list: 이미지 파일 경로 리스트
+        """
+        try:
+            # 이미지 디렉토리의 모든 이미지 파일
+            image_files = []
+            if os.path.exists(self.images_dir):
+                image_files = [os.path.join(self.images_dir, f) for f in os.listdir(self.images_dir)
+                             if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+            
+            return image_files
+            
+        except Exception as e:
+            print(f"이미지 파일 검색 중 오류 발생: {str(e)}")
+            return []
+
+    def optimize_image(self, image_path):
+        """이미지를 최적화합니다.
+        
+        Args:
+            image_path (str): 원본 이미지 파일 경로
             
         Returns:
             str: 최적화된 이미지 파일 경로
         """
         try:
             # 이미지 로드
-            img = Image.open(image_path)
-            
-            # 이미지 크기 최적화
-            img.thumbnail(max_size, Image.Resampling.LANCZOS)
-            
-            # 최적화된 이미지 저장
-            filename = os.path.basename(image_path)
-            name, ext = os.path.splitext(filename)
-            optimized_filename = f"{name}_optimized{ext}"
-            optimized_path = os.path.join(os.path.dirname(image_path), optimized_filename)
-            
-            # PNG 파일은 quality 파라미터 무시
-            if ext.lower() == '.png':
-                img.save(optimized_path, 'PNG', optimize=True)
-            else:
-                img.save(optimized_path, quality=quality, optimize=True)
-            
-            print(f"이미지가 최적화되어 {optimized_path}에 저장되었습니다.")
-            return optimized_path
-            
+            with Image.open(image_path) as img:
+                # 이미지가 너무 크면 리사이즈
+                max_size = (1920, 1080)
+                if img.size[0] > max_size[0] or img.size[1] > max_size[1]:
+                    img.thumbnail(max_size, Image.LANCZOS)
+                
+                # 최적화된 이미지 저장
+                optimized_path = image_path.replace('.', '_optimized.')
+                img.save(optimized_path, optimize=True, quality=85)
+                
+                return optimized_path
+                
         except Exception as e:
-            print(f"이미지 최적화 중 오류 발생: {e}")
+            print(f"이미지 최적화 중 오류 발생: {str(e)}")
             return image_path
 
-    def save_image_metadata(self, image_path, metadata):
-        """이미지 메타데이터 저장
+    def connect_to_wordpress(self):
+        """워드프레스에 연결 및 인증
         
-        Args:
-            image_path (str): 이미지 파일 경로
-            metadata (dict): 저장할 메타데이터
-            
         Returns:
-            bool: 저장 성공 여부
+            bool: 연결 성공 여부
         """
         try:
-            # 메타데이터에 기본 정보 추가
-            metadata.update({
-                'original_path': image_path,
-                'filename': os.path.basename(image_path),
-                'created_at': datetime.datetime.now().isoformat(),
-            })
+            if not all([self.wp_url, self.wp_username, self.wp_password]):
+                print("워드프레스 연결 정보가 설정되지 않았습니다. .env 파일을 확인하세요.")
+                return False
             
-            # 이미지 정보 추가
-            with Image.open(image_path) as img:
-                metadata.update({
-                    'size': img.size,
-                    'format': img.format,
-                    'mode': img.mode,
-                })
+            # Basic Auth 토큰 생성
+            credentials = f"{self.wp_username}:{self.wp_password}"
+            self.auth_token = b64encode(credentials.encode()).decode()
             
-            # 메타데이터 파일 경로
-            filename = os.path.basename(image_path)
-            metadata_filename = f"{os.path.splitext(filename)[0]}_metadata.json"
-            metadata_path = os.path.join(self.metadata_dir, metadata_filename)
+            # 연결 테스트
+            headers = {
+                'Authorization': f'Basic {self.auth_token}'
+            }
+            response = requests.get(f"{self.api_url}/users/me", headers=headers)
             
-            # 메타데이터 저장
-            with open(metadata_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
-            
-            print(f"메타데이터가 {metadata_path}에 저장되었습니다.")
-            return True
-            
+            if response.status_code == 200:
+                print("워드프레스에 연결되었습니다.")
+                return True
+            else:
+                print(f"워드프레스 연결 실패: {response.status_code}")
+                print(f"응답 내용: {response.text}")
+                self.auth_token = None
+                return False
+                
         except Exception as e:
-            print(f"메타데이터 저장 중 오류 발생: {e}")
+            print(f"워드프레스 연결 중 오류 발생: {str(e)}")
+            self.auth_token = None
+            return False
+
+    def test_connection(self):
+        """워드프레스 연결 테스트
+        
+        Returns:
+            bool: 연결 성공 여부
+        """
+        try:
+            if not self.auth_token:
+                return self.connect_to_wordpress()
+            
+            headers = {
+                'Authorization': f'Basic {self.auth_token}'
+            }
+            response = requests.get(f"{self.api_url}/users/me", headers=headers)
+            
+            if response.status_code == 200:
+                user_info = response.json()
+                print(f"워드프레스에 연결되었습니다. 사용자: {user_info['name']}")
+                return True
+            else:
+                print(f"워드프레스 연결 테스트 실패: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"워드프레스 연결 테스트 중 오류 발생: {str(e)}")
             return False
 
     def upload_image_to_wordpress(self, image_path, title=None, alt_text=None, caption=None):
@@ -155,204 +222,261 @@ class WordPressPublisher:
             dict: 업로드된 이미지 정보 (URL 등)
         """
         try:
-            if self.client is None:
-                self.connect_to_wordpress()
-            
-            if self.client is None:
-                raise Exception("워드프레스 클라이언트가 초기화되지 않았습니다.")
+            if not self.auth_token:
+                if not self.connect_to_wordpress():
+                    return None
             
             # 이미지 최적화
             optimized_path = self.optimize_image(image_path)
             
             # 이미지 데이터 준비
+            headers = {
+                'Authorization': f'Basic {self.auth_token}',
+                'Content-Disposition': f'attachment; filename={os.path.basename(optimized_path)}'
+            }
+            
             with open(optimized_path, 'rb') as img:
-                filename = os.path.basename(optimized_path)
-                data = {
-                    'name': filename,
-                    'type': f'image/{os.path.splitext(filename)[1][1:]}',
-                    'bits': xmlrpc_client.Binary(img.read()),
-                    'overwrite': True
+                files = {
+                    'file': img
                 }
                 
-                # 메타데이터 추가
-                if title:
-                    data['title'] = title
-                if alt_text:
-                    data['alt'] = alt_text
-                if caption:
-                    data['caption'] = caption
+                response = requests.post(
+                    f"{self.api_url}/media",
+                    headers=headers,
+                    files=files
+                )
             
-            # 이미지 업로드
-            response = self.client.call(UploadFile(data))
-            
-            # 메타데이터 저장
-            metadata = {
-                'wordpress_id': response['id'],
-                'url': response['url'],
-                'title': title,
-                'alt_text': alt_text,
-                'caption': caption,
-                'upload_date': datetime.datetime.now().isoformat()
-            }
-            self.save_image_metadata(image_path, metadata)
-            
-            print(f"이미지가 워드프레스에 업로드되었습니다. URL: {response['url']}")
-            return response
-            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                
+                # 이미지 메타데이터 업데이트
+                if title or alt_text or caption:
+                    meta = {}
+                    if title:
+                        meta['title'] = title
+                    if alt_text:
+                        meta['alt_text'] = alt_text
+                    if caption:
+                        meta['caption'] = caption
+                    
+                    update_response = requests.post(
+                        f"{self.api_url}/media/{data['id']}",
+                        headers={
+                            'Authorization': f'Basic {self.auth_token}',
+                            'Content-Type': 'application/json'
+                        },
+                        json=meta
+                    )
+                    
+                    if update_response.status_code in [200, 201]:
+                        data = update_response.json()
+                
+                print(f"이미지가 워드프레스에 업로드되었습니다. URL: {data['source_url']}")
+                return {
+                    'id': data['id'],
+                    'url': data['source_url'],
+                    'title': data['title']['rendered'],
+                    'alt_text': data.get('alt_text', ''),
+                    'caption': data.get('caption', {}).get('rendered', '')
+                }
+            else:
+                print(f"이미지 업로드 실패: {response.status_code}")
+                print(f"응답 내용: {response.text}")
+                return None
+                
         except Exception as e:
-            print(f"이미지 업로드 중 오류 발생: {e}")
+            print(f"이미지 업로드 중 오류 발생: {str(e)}")
             return None
 
-    def insert_images_to_content(self, content, image_urls):
-        """블로그 내용에 이미지 삽입
-        
-        Args:
-            content (str): 블로그 내용
-            image_urls (list): 이미지 URL 리스트
-            
-        Returns:
-            str: 이미지가 삽입된 블로그 내용
-        """
-        try:
-            # 이미지 설명 패턴 찾기
-            patterns = [
-                r'\[이미지 설명 (\d+)\].*?(?=\[이미지 설명 \d+\]|$)',
-                r'\[여기에 이미지 (\d+) 삽입\].*?(?=\[여기에 이미지 \d+ 삽입\]|$)'
-            ]
-            
-            modified_content = content
-            for pattern in patterns:
-                matches = re.finditer(pattern, content, re.DOTALL)
-                for match in matches:
-                    idx = int(match.group(1)) - 1
-                    if idx < len(image_urls):
-                        # 이미지 HTML 태그 생성
-                        img_html = f'<img src="{image_urls[idx]}" class="wp-image" alt="AI 뉴스 이미지 {idx + 1}" />'
-                        # 이미지 설명을 이미지 태그로 교체
-                        modified_content = modified_content.replace(match.group(0), img_html)
-            
-            return modified_content
-            
-        except Exception as e:
-            print(f"이미지 삽입 중 오류 발생: {e}")
-            return content
-
-    def process_images_for_blog(self, content, images):
-        """블로그용 이미지 처리 워크플로우
-        
-        Args:
-            content (str): 블로그 내용
-            images (list): 이미지 파일 경로 리스트
-            
-        Returns:
-            tuple: (이미지가 삽입된 블로그 내용, 업로드된 이미지 URL 리스트)
-        """
-        try:
-            image_urls = []
-            
-            # 각 이미지 처리
-            for i, image_path in enumerate(images, 1):
-                # 이미지 업로드
-                response = self.upload_image_to_wordpress(
-                    image_path,
-                    title=f"AI 뉴스 이미지 {i}",
-                    alt_text=f"AI 기술 뉴스 이미지 {i}",
-                    caption=f"AI 뉴스 블로그 이미지 {i}"
-                )
-                
-                if response:
-                    image_urls.append(response['url'])
-            
-            # 블로그 내용에 이미지 삽입
-            modified_content = self.insert_images_to_content(content, image_urls)
-            
-            return modified_content, image_urls
-            
-        except Exception as e:
-            print(f"이미지 처리 중 오류 발생: {e}")
-            return content, []
-
-    def publish_blog(self, title, content, images=None, client=None, publish=True):
+    def publish_blog(self, title, content, metadata=None, images=None, publish=True):
         """블로그 게시
         
         Args:
             title (str): 블로그 제목
             content (str): 블로그 내용
+            metadata (dict, optional): 블로그 메타데이터
             images (list, optional): 이미지 파일 경로 리스트
-            client (Client, optional): 워드프레스 클라이언트 객체
             publish (bool, optional): 즉시 게시 여부. 기본값은 True.
             
         Returns:
-            str: 게시된 포스트 ID
+            str: 게시된 포스트 URL
         """
-        if client is None:
-            client = self.connect_to_wordpress()
-            
-        if client is None:
-            print("워드프레스 연결에 실패했습니다.")
-            return None
-        
         try:
-            # 이미지 처리
-            if images:
-                content, image_urls = self.process_images_for_blog(content, images)
+            if not self.auth_token:
+                if not self.connect_to_wordpress():
+                    return None
             
-            # HTML로 변환
-            html_content = self.markdown_to_html(content)
+            # 이미지 업로드 및 URL 치환
+            if images:
+                for image_path in images:
+                    image_info = self.upload_image_to_wordpress(
+                        image_path,
+                        title=os.path.basename(image_path),
+                        alt_text=os.path.basename(image_path)
+                    )
+                    if image_info:
+                        # 이미지 URL을 콘텐츠에 추가
+                        content += f"\n\n<img src='{image_info['url']}' alt='{image_info['alt_text']}' />"
+            
+            # 포스트 데이터 준비
+            post_data = {
+                'title': title,
+                'content': content,
+                'status': 'publish' if publish else 'draft'
+            }
+            
+            # 메타데이터 처리
+            if metadata:
+                if 'categories' in metadata:
+                    post_data['categories'] = self.get_category_ids(metadata['categories'])
+                if 'tags' in metadata:
+                    post_data['tags'] = self.get_tag_ids(metadata['tags'])
             
             # 포스트 생성
-            post = WordPressPost()
-            post.title = title
-            post.content = html_content
-            post.terms_names = {
-                'category': ['AI', '기술', '뉴스'],
-                'post_tag': ['인공지능', '기술동향', '자동화']
+            headers = {
+                'Authorization': f'Basic {self.auth_token}',
+                'Content-Type': 'application/json'
             }
-            post.post_status = 'publish' if publish else 'draft'
             
-            # 포스트 게시
-            post_id = client.call(NewPost(post))
+            response = requests.post(
+                f"{self.api_url}/posts",
+                headers=headers,
+                json=post_data
+            )
             
-            status = "게시" if publish else "임시저장"
-            print(f"블로그가 성공적으로 {status}되었습니다. 포스트 ID: {post_id}")
-            return post_id
-            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                print(f"블로그가 성공적으로 게시되었습니다. URL: {data['link']}")
+                return data['link']
+            else:
+                print(f"블로그 게시 실패: {response.status_code}")
+                print(f"응답 내용: {response.text}")
+                return None
+                
         except Exception as e:
-            print(f"블로그 게시 중 오류 발생: {e}")
+            print(f"블로그 게시 중 오류 발생: {str(e)}")
             return None
 
-def main():
-    """메인 함수"""
-    publisher = WordPressPublisher()
-    
-    # 블로그 내용 로드
-    blog_content = publisher.load_blog_content()
-    
-    if blog_content:
-        # 제목과 본문 추출
-        title, content = publisher.extract_title_and_content(blog_content)
+    def get_category_ids(self, categories):
+        """카테고리 이름을 ID로 변환
         
-        if title and content:
-            # 이미지 파일 찾기
-            images = [f for f in os.listdir(publisher.images_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
-            image_paths = [os.path.join(publisher.images_dir, f) for f in images]
+        Args:
+            categories (list): 카테고리 이름 리스트
             
-            # 워드프레스 연결 테스트
-            client = publisher.connect_to_wordpress()
+        Returns:
+            list: 카테고리 ID 리스트
+        """
+        try:
+            headers = {
+                'Authorization': f'Basic {self.auth_token}'
+            }
             
-            if client and publisher.test_connection(client):
-                # 실제 워드프레스에 게시
-                post_id = publisher.publish_blog(title, content, image_paths, client)
-                if post_id:
-                    print(f"블로그가 워드프레스에 성공적으로 게시되었습니다. 포스트 ID: {post_id}")
-            else:
-                # 연결 실패 시 시뮬레이션 실행
-                print("워드프레스 연결에 실패했습니다. 게시 시뮬레이션을 실행합니다.")
-                publisher.simulate_publish(title, content)
+            category_ids = []
+            for category in categories:
+                # 카테고리 검색
+                response = requests.get(
+                    f"{self.api_url}/categories",
+                    headers=headers,
+                    params={'search': category}
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data:
+                        category_ids.append(data[0]['id'])
+                    else:
+                        # 카테고리가 없으면 생성
+                        create_response = requests.post(
+                            f"{self.api_url}/categories",
+                            headers={**headers, 'Content-Type': 'application/json'},
+                            json={'name': category}
+                        )
+                        if create_response.status_code in [200, 201]:
+                            category_ids.append(create_response.json()['id'])
+            
+            return category_ids
+            
+        except Exception as e:
+            print(f"카테고리 ID 변환 중 오류 발생: {str(e)}")
+            return []
+
+    def get_tag_ids(self, tags):
+        """태그 이름을 ID로 변환
+        
+        Args:
+            tags (list): 태그 이름 리스트
+            
+        Returns:
+            list: 태그 ID 리스트
+        """
+        try:
+            headers = {
+                'Authorization': f'Basic {self.auth_token}'
+            }
+            
+            tag_ids = []
+            for tag in tags:
+                # 태그 검색
+                response = requests.get(
+                    f"{self.api_url}/tags",
+                    headers=headers,
+                    params={'search': tag}
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data:
+                        tag_ids.append(data[0]['id'])
+                    else:
+                        # 태그가 없으면 생성
+                        create_response = requests.post(
+                            f"{self.api_url}/tags",
+                            headers={**headers, 'Content-Type': 'application/json'},
+                            json={'name': tag}
+                        )
+                        if create_response.status_code in [200, 201]:
+                            tag_ids.append(create_response.json()['id'])
+            
+            return tag_ids
+            
+        except Exception as e:
+            print(f"태그 ID 변환 중 오류 발생: {str(e)}")
+            return []
+
+def main():
+    """메인 실행 함수"""
+    try:
+        publisher = WordPressPublisher()
+        
+        # 워드프레스 연결 테스트
+        if not publisher.test_connection():
+            print("워드프레스 연결에 실패했습니다.")
+            return
+        
+        # 최신 블로그 파일 찾기
+        blog_file = publisher.find_latest_blog()
+        if not blog_file:
+            print("처리할 블로그 내용이 없습니다.")
+            return
+        
+        # 블로그 내용 처리
+        title, content, metadata = publisher.process_blog_content(blog_file)
+        if not title or not content:
+            print("블로그 내용을 처리할 수 없습니다.")
+            return
+        
+        # 이미지 파일 찾기
+        images = publisher.find_blog_images(content)
+        
+        # 블로그 게시
+        post_url = publisher.publish_blog(title, content, metadata, images)
+        if post_url:
+            print(f"블로그가 성공적으로 게시되었습니다: {post_url}")
         else:
-            print("블로그 제목 또는 내용을 추출할 수 없습니다.")
-    else:
-        print("처리할 블로그 내용이 없습니다.")
+            print("블로그 게시에 실패했습니다.")
+            
+    except Exception as e:
+        print(f"실행 중 오류 발생: {str(e)}")
 
 if __name__ == "__main__":
     main() 

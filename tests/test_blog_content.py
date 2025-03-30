@@ -5,7 +5,10 @@ from src.processors.gpt_processor import GPTProcessor
 
 class TestBlogContent(unittest.TestCase):
     def setUp(self):
-        self.gpt_processor = GPTProcessor()
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+        self.gpt_processor = GPTProcessor(api_key=api_key)
         self.test_news_file = 'data/crawled/ai_news_rss_20250330.json'
         
     def test_prompt_structure(self):

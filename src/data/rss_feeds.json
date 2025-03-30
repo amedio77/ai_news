@@ -1,0 +1,128 @@
+{
+  "general": {
+    "TechCrunch": {
+      "url": "https://techcrunch.com/feed/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "VentureBeat": {
+      "url": "https://venturebeat.com/feed/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "CNET": {
+      "url": "https://www.cnet.com/rss/news/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "Engadget": {
+      "url": "https://www.engadget.com/rss.xml",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "TNW": {
+      "url": "https://thenextweb.com/feed",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "SiliconAngle": {
+      "url": "https://siliconangle.com/feed/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "Forbes Tech": {
+      "url": "https://www.forbes.com/innovation/feed/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "MIT Tech Review": {
+      "url": "https://www.technologyreview.com/feed/",
+      "category": "tech",
+      "language": "en",
+      "update_frequency": "daily"
+    }
+  },
+  "specialized": {
+    "DeepMind Blog": {
+      "url": "https://deepmind.google/blog/rss.xml",
+      "category": "ai",
+      "language": "en",
+      "update_frequency": "weekly"
+    },
+    "Google AI Blog": {
+      "url": "http://feeds.feedburner.com/blogspot/gJZg",
+      "category": "ai",
+      "language": "en",
+      "update_frequency": "weekly"
+    },
+    "Microsoft Research": {
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "category": "ai",
+      "language": "en",
+      "update_frequency": "weekly"
+    },
+    "arXiv AI": {
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "category": "research",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "arXiv ML": {
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "category": "research",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "arXiv CL": {
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "category": "research",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "arXiv CV": {
+      "url": "https://rss.arxiv.org/rss/cs.CV",
+      "category": "research",
+      "language": "en",
+      "update_frequency": "daily"
+    },
+    "arXiv RO": {
+      "url": "https://rss.arxiv.org/rss/cs.RO",
+      "category": "research",
+      "language": "en",
+      "update_frequency": "daily"
+    }
+  },
+  "korean": {
+    "전자신문 AI": {
+      "url": "https://www.etnews.com/rss/section_703.xml",
+      "category": "tech",
+      "language": "ko",
+      "update_frequency": "daily"
+    },
+    "IT동아 AI": {
+      "url": "https://it.donga.com/feeds/rss/news/",
+      "category": "tech",
+      "language": "ko",
+      "update_frequency": "daily"
+    },
+    "디지털데일리 AI": {
+      "url": "https://www.ddaily.co.kr/",
+      "category": "tech",
+      "language": "ko",
+      "update_frequency": "daily"
+    },
+    "지디넷코리아 AI": {
+      "url": "https://feeds.feedburner.com/zdkorea",
+      "category": "tech",
+      "language": "ko",
+      "update_frequency": "daily"
+    }
+  }
+}

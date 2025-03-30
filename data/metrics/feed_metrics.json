@@ -1,0 +1,479 @@
+{
+  "The Verge AI": {
+    "total_requests": 12,
+    "successful_requests": 0,
+    "failed_requests": 12,
+    "total_response_time": 1.0315918922424316,
+    "avg_response_time": 0.08596599102020264,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:01"
+  },
+  "Wired AI": {
+    "total_requests": 12,
+    "successful_requests": 0,
+    "failed_requests": 12,
+    "total_response_time": 4.0933308601379395,
+    "avg_response_time": 0.34111090501149494,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:03"
+  },
+  "MIT Technology Review": {
+    "total_requests": 10,
+    "successful_requests": 4,
+    "failed_requests": 6,
+    "total_response_time": 2.542710065841675,
+    "avg_response_time": 0.25427100658416746,
+    "last_success": "2025-03-30 04:06:28",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "TechCrunch AI": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 1.2748923301696777,
+    "avg_response_time": 0.15936154127120972,
+    "last_success": "2025-03-30 04:04:51",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "Mashable Tech": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 1.1484534740447998,
+    "avg_response_time": 0.14355668425559998,
+    "last_success": "2025-03-30 04:04:51",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "ZDNet AI": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 1.2210216522216797,
+    "avg_response_time": 0.15262770652770996,
+    "last_success": "2025-03-30 04:04:51",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "VentureBeat AI": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 1.206221580505371,
+    "avg_response_time": 0.1507776975631714,
+    "last_success": "2025-03-30 04:04:51",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "Forbes AI": {
+    "total_requests": 12,
+    "successful_requests": 0,
+    "failed_requests": 12,
+    "total_response_time": 2.7255938053131104,
+    "avg_response_time": 0.22713281710942587,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:02"
+  },
+  "CNET AI": {
+    "total_requests": 12,
+    "successful_requests": 0,
+    "failed_requests": 12,
+    "total_response_time": 2.632967948913574,
+    "avg_response_time": 0.21941399574279785,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:02"
+  },
+  "Engadget": {
+    "total_requests": 20,
+    "successful_requests": 14,
+    "failed_requests": 6,
+    "total_response_time": 34.20781588554382,
+    "avg_response_time": 1.7103907942771912,
+    "last_success": "2025-03-30 04:38:14",
+    "last_failure": "2025-03-30 04:03:20"
+  },
+  "TNW AI": {
+    "total_requests": 12,
+    "successful_requests": 0,
+    "failed_requests": 12,
+    "total_response_time": 0.434556245803833,
+    "avg_response_time": 0.03621302048365275,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:01"
+  },
+  "SiliconAngle AI": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 2.5945956707000732,
+    "avg_response_time": 0.32432445883750916,
+    "last_success": "2025-03-30 04:04:52",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "Data Machina": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 0.3738670349121094,
+    "avg_response_time": 0.04673337936401367,
+    "last_success": "2025-03-30 04:04:52",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "DeepMind Blog": {
+    "total_requests": 20,
+    "successful_requests": 14,
+    "failed_requests": 6,
+    "total_response_time": 26.76791000366211,
+    "avg_response_time": 1.3383955001831054,
+    "last_success": "2025-03-30 04:38:13",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "KDnuggets": {
+    "total_requests": 10,
+    "successful_requests": 4,
+    "failed_requests": 6,
+    "total_response_time": 1.399667501449585,
+    "avg_response_time": 0.1399667501449585,
+    "last_success": "2025-03-30 04:06:28",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "AI Weekly": {
+    "total_requests": 14,
+    "successful_requests": 2,
+    "failed_requests": 12,
+    "total_response_time": 4.774677753448486,
+    "avg_response_time": 0.3410484109606062,
+    "last_success": "2025-03-30 04:04:53",
+    "last_failure": "2025-03-30 04:06:39"
+  },
+  "OpenAI Blog": {
+    "total_requests": 18,
+    "successful_requests": 0,
+    "failed_requests": 18,
+    "total_response_time": 1.1268572807312012,
+    "avg_response_time": 0.0626031822628445,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:38"
+  },
+  "Google AI Blog": {
+    "total_requests": 20,
+    "successful_requests": 14,
+    "failed_requests": 6,
+    "total_response_time": 31.59260392189026,
+    "avg_response_time": 1.579630196094513,
+    "last_success": "2025-03-30 04:38:13",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "Microsoft Research AI": {
+    "total_requests": 8,
+    "successful_requests": 2,
+    "failed_requests": 6,
+    "total_response_time": 0.1495985984802246,
+    "avg_response_time": 0.018699824810028076,
+    "last_success": "2025-03-30 04:04:53",
+    "last_failure": "2025-03-30 04:03:30"
+  },
+  "Anthropic Blog": {
+    "total_requests": 18,
+    "successful_requests": 0,
+    "failed_requests": 18,
+    "total_response_time": 0.6603662967681885,
+    "avg_response_time": 0.03668701648712158,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:39"
+  },
+  "Hugging Face Blog": {
+    "total_requests": 10,
+    "successful_requests": 4,
+    "failed_requests": 6,
+    "total_response_time": 2.567924737930298,
+    "avg_response_time": 0.2567924737930298,
+    "last_success": "2025-03-30 04:06:30",
+    "last_failure": "2025-03-30 04:03:40"
+  },
+  "Papers with Code": {
+    "total_requests": 18,
+    "successful_requests": 0,
+    "failed_requests": 18,
+    "total_response_time": 9.690037488937378,
+    "avg_response_time": 0.5383354160520766,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:42"
+  },
+  "arXiv AI": {
+    "total_requests": 20,
+    "successful_requests": 4,
+    "failed_requests": 16,
+    "total_response_time": 119.93566393852234,
+    "avg_response_time": 5.996783196926117,
+    "last_success": "2025-03-30 04:06:30",
+    "last_failure": "2025-03-30 04:38:22"
+  },
+  "AI Alignment Forum": {
+    "total_requests": 10,
+    "successful_requests": 4,
+    "failed_requests": 6,
+    "total_response_time": 8.823802709579468,
+    "avg_response_time": 0.8823802709579468,
+    "last_success": "2025-03-30 04:06:32",
+    "last_failure": "2025-03-30 04:03:40"
+  },
+  "ML Collective": {
+    "total_requests": 18,
+    "successful_requests": 0,
+    "failed_requests": 18,
+    "total_response_time": 6.8206398487091064,
+    "avg_response_time": 0.3789244360393948,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:42"
+  },
+  "Distill.pub": {
+    "total_requests": 10,
+    "successful_requests": 4,
+    "failed_requests": 6,
+    "total_response_time": 0.6963446140289307,
+    "avg_response_time": 0.06963446140289306,
+    "last_success": "2025-03-30 04:06:31",
+    "last_failure": "2025-03-30 04:03:40"
+  },
+  "AI타임스": {
+    "total_requests": 5,
+    "successful_requests": 2,
+    "failed_requests": 3,
+    "total_response_time": 0.22204017639160156,
+    "avg_response_time": 0.04440803527832031,
+    "last_success": "2025-03-30 04:06:31",
+    "last_failure": "2025-03-30 04:03:40"
+  },
+  "인공지능신문": {
+    "total_requests": 9,
+    "successful_requests": 0,
+    "failed_requests": 9,
+    "total_response_time": 0.4550440311431885,
+    "avg_response_time": 0.05056044790479872,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:41"
+  },
+  "전자신문 AI": {
+    "total_requests": 9,
+    "successful_requests": 1,
+    "failed_requests": 8,
+    "total_response_time": 51.21494102478027,
+    "avg_response_time": 5.690549002753364,
+    "last_success": "2025-03-30 04:05:01",
+    "last_failure": "2025-03-30 04:38:22"
+  },
+  "IT조선 AI": {
+    "total_requests": 6,
+    "successful_requests": 0,
+    "failed_requests": 6,
+    "total_response_time": 0.25680994987487793,
+    "avg_response_time": 0.04280165831247965,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:11"
+  },
+  "디지털타임스 AI": {
+    "total_requests": 6,
+    "successful_requests": 0,
+    "failed_requests": 6,
+    "total_response_time": 0.7042410373687744,
+    "avg_response_time": 0.11737350622812907,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:05:12"
+  },
+  "Wired": {
+    "total_requests": 2,
+    "successful_requests": 2,
+    "failed_requests": 0,
+    "total_response_time": 0.16748261451721191,
+    "avg_response_time": 0.08374130725860596,
+    "last_success": "2025-03-30 04:06:27",
+    "last_failure": null
+  },
+  "The Verge": {
+    "total_requests": 2,
+    "successful_requests": 2,
+    "failed_requests": 0,
+    "total_response_time": 0.21384572982788086,
+    "avg_response_time": 0.10692286491394043,
+    "last_success": "2025-03-30 04:06:27",
+    "last_failure": null
+  },
+  "Forbes Tech": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 1.7250289916992188,
+    "avg_response_time": 0.1437524159749349,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "Mashable": {
+    "total_requests": 2,
+    "successful_requests": 2,
+    "failed_requests": 0,
+    "total_response_time": 1.1387360095977783,
+    "avg_response_time": 0.5693680047988892,
+    "last_success": "2025-03-30 04:06:28",
+    "last_failure": null
+  },
+  "CNET": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 4.002573728561401,
+    "avg_response_time": 0.33354781071345013,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "ZDNet": {
+    "total_requests": 2,
+    "successful_requests": 2,
+    "failed_requests": 0,
+    "total_response_time": 1.1567814350128174,
+    "avg_response_time": 0.5783907175064087,
+    "last_success": "2025-03-30 04:06:28",
+    "last_failure": null
+  },
+  "TNW": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 1.5446083545684814,
+    "avg_response_time": 0.1287173628807068,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "VentureBeat": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 3.788179874420166,
+    "avg_response_time": 0.3156816562016805,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "TechCrunch": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 4.6490092277526855,
+    "avg_response_time": 0.38741743564605713,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "SiliconAngle": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 13.255650281906128,
+    "avg_response_time": 1.1046375234921773,
+    "last_success": "2025-03-30 04:38:13",
+    "last_failure": null
+  },
+  "Microsoft Research": {
+    "total_requests": 12,
+    "successful_requests": 12,
+    "failed_requests": 0,
+    "total_response_time": 14.176833391189575,
+    "avg_response_time": 1.1814027825991313,
+    "last_success": "2025-03-30 04:38:13",
+    "last_failure": null
+  },
+  "전자신문": {
+    "total_requests": 1,
+    "successful_requests": 1,
+    "failed_requests": 0,
+    "total_response_time": 0.0746767520904541,
+    "avg_response_time": 0.0746767520904541,
+    "last_success": "2025-03-30 04:06:31",
+    "last_failure": null
+  },
+  "IT조선": {
+    "total_requests": 3,
+    "successful_requests": 0,
+    "failed_requests": 3,
+    "total_response_time": 0.24288153648376465,
+    "avg_response_time": 0.08096051216125488,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:41"
+  },
+  "디지털타임스": {
+    "total_requests": 3,
+    "successful_requests": 0,
+    "failed_requests": 3,
+    "total_response_time": 0.8662068843841553,
+    "avg_response_time": 0.28873562812805176,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:06:42"
+  },
+  "MIT Tech Review": {
+    "total_requests": 10,
+    "successful_requests": 10,
+    "failed_requests": 0,
+    "total_response_time": 3.3225553035736084,
+    "avg_response_time": 0.33225553035736083,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "arXiv ML": {
+    "total_requests": 10,
+    "successful_requests": 10,
+    "failed_requests": 0,
+    "total_response_time": 7.3224146366119385,
+    "avg_response_time": 0.7322414636611938,
+    "last_success": "2025-03-30 04:38:12",
+    "last_failure": null
+  },
+  "arXiv CV": {
+    "total_requests": 10,
+    "successful_requests": 0,
+    "failed_requests": 10,
+    "total_response_time": 115.45401811599731,
+    "avg_response_time": 11.545401811599731,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:38:22"
+  },
+  "arXiv CL": {
+    "total_requests": 10,
+    "successful_requests": 0,
+    "failed_requests": 10,
+    "total_response_time": 115.2245283126831,
+    "avg_response_time": 11.52245283126831,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:38:22"
+  },
+  "arXiv RO": {
+    "total_requests": 10,
+    "successful_requests": 0,
+    "failed_requests": 10,
+    "total_response_time": 115.21376156806946,
+    "avg_response_time": 11.521376156806946,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:38:22"
+  },
+  "지디넷코리아 AI": {
+    "total_requests": 5,
+    "successful_requests": 5,
+    "failed_requests": 0,
+    "total_response_time": 3.8764772415161133,
+    "avg_response_time": 0.7752954483032226,
+    "last_success": "2025-03-30 04:38:14",
+    "last_failure": null
+  },
+  "IT동아 AI": {
+    "total_requests": 5,
+    "successful_requests": 5,
+    "failed_requests": 0,
+    "total_response_time": 7.3127219676971436,
+    "avg_response_time": 1.4625443935394287,
+    "last_success": "2025-03-30 04:38:14",
+    "last_failure": null
+  },
+  "디지털데일리 AI": {
+    "total_requests": 5,
+    "successful_requests": 0,
+    "failed_requests": 5,
+    "total_response_time": 55.05202031135559,
+    "avg_response_time": 11.010404062271117,
+    "last_success": null,
+    "last_failure": "2025-03-30 04:38:24"
+  }
+}
